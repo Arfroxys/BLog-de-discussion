@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "1999:80"
+    restart: always   
+    volumes:
+      - ./cestdelamerde:/var/www/html
+    networks:
+      - heticw2
+
+  database: 
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: data
+      MYSQL_ROOT_PASSWORD: motdepasse
+    volumes:
+      - ./migration/dump.sql:/docker-entrypoint-initdb.d/db_data.sql
+      - db_data:/var/lib/mysql
+    networks:
+      - heticw2
+      
+  adminer:
+    image: adminer
+    restart: always
+    ports: 
+      - "1998:8080"
+    networks:
+      - heticw2
+
+networks:
+  heticw2:
+
+volumes:
+  db_data:
